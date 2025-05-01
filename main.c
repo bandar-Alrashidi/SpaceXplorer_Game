@@ -15,6 +15,10 @@ void startNewLevel()
     Py = 16;
     printPlayer();
 
+    removeAsteroids();
+    removeJunk();
+    removeBullets();
+
     drawFinalBoss();
     bossActive = true;
 }

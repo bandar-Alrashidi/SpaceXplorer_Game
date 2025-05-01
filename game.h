@@ -94,5 +94,10 @@ void drawFinalBoss();
 void moveFinalBoss();
 void spawnBossBomb(int x, int y);
 void moveBossBombs();
+void removeAsteroids();
+void removeJunk();
+void removeBullets();
+
+
 
 #endif
