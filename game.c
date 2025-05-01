@@ -161,3 +161,69 @@ void moveBullets()
         }
     }
 }
+
+void spawnAsteroid()
+{
+    for (int i = 0; i < MAX_ASTEROIDS; i++)
+    {
+        if (!asteroids[i].active)
+        {
+            asteroids[i].x = rand() % (GRID_COLS - 2) + 1;
+            asteroids[i].y = 1;
+            asteroids[i].active = true;
+            asteroids[i].health = 1;
+            gotoxy(asteroids[i].x, asteroids[i].y);
+            putchar('*');
+            break;
+        }
+    }
+}
+
+void spawnJunk()
+{
+    for (int i = 0; i < MAX_JUNK; i++)
+    {
+        if (!junks[i].active)
+        {
+            junks[i].x = rand() % (GRID_COLS - 2) + 1;
+            junks[i].y = rand() % (GRID_ROWS - 2) + 1;
+            char spot = getCharAtxy(junks[i].x, junks[i].y);
+            if (spot == ' ')
+            {
+                junks[i].active = true;
+                junks[i].spawnTime = time(NULL);
+                gotoxy(junks[i].x, junks[i].y);
+                putchar('#');
+                gotoxy(25, 15);
+            }
+            break;
+        }
+    }
+}
+
+void moveAsteroids()
+{
+    for (int i = 0; i < MAX_ASTEROIDS; i++)
+    {
+        if (asteroids[i].active)
+        {
+            char next = getCharAtxy(asteroids[i].x, asteroids[i].y + 1);
+            if (next == ' ' || next == '#')
+            {
+                gotoxy(asteroids[i].x, asteroids[i].y);
+                putchar(' ');
+                asteroids[i].y++;
+                gotoxy(asteroids[i].x, asteroids[i].y);
+                putchar('*');
+            }
+
+            else if (next == '+' || next == '-')
+            {
+                gotoxy(asteroids[i].x, asteroids[i].y);
+                putchar(' ');
+                asteroids[i].y = 0;
+                asteroids[i].active = false;
+            }
+        }
+    }
+}

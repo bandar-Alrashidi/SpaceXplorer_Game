@@ -3,6 +3,9 @@
 #include <conio.h>
 #include "utility.h"
 
+unsigned long lastAsteroidTime = 0;
+unsigned long lastJunkTime = 0;
+
 void playGame()
 {
     clearScreen();
@@ -12,7 +15,7 @@ void playGame()
     printInstructions(25, 18);
     while (1)
     {
-
+        unsigned long currentTime = GetTickCount();
         if (GetAsyncKeyState(VK_LEFT))
         {
             movePlayerLeft();
@@ -38,8 +41,18 @@ void playGame()
         }
 
         moveBullets();
+        if (currentTime - lastAsteroidTime >= 5000)
+        {
+            spawnAsteroid();
+            lastAsteroidTime = currentTime;
+        }
 
-
+        if (currentTime - lastJunkTime >= 10000)
+        {
+            spawnJunk();
+            lastJunkTime = currentTime;
+        }
+        moveAsteroids();
 
         Sleep(100);
     }

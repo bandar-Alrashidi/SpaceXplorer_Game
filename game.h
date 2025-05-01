@@ -70,5 +70,8 @@ void printBullet(int x, int y);
 void eraseBullet(int x, int y);
 void generateBullet();
 void moveBullets();
+void spawnAsteroid();
+void spawnJunk();
+void moveAsteroids();
 
 #endif
