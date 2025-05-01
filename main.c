@@ -12,6 +12,7 @@ void playGame()
     printInstructions(25, 18);
     while (1)
     {
+
         if (GetAsyncKeyState(VK_LEFT))
         {
             movePlayerLeft();
@@ -31,36 +32,45 @@ void playGame()
         {
             movePlayerDown();
         }
+        if (GetAsyncKeyState(VK_SPACE))
+        {
+            generateBullet();
+        }
+
+        moveBullets();
+
+
 
         Sleep(100);
     }
     gotoxy(1, 15);
 }
-    int main()
-    {
-        displayIntro("intro.txt");
-        int choice = 0;
-        while (choice != 3)
-        {
-            choice = gameMenu();
-            if (choice == 1)
-            {
-                playGame();
-            }
-            else if (choice == 2)
-            {
-                playGame();
-            }
-            else if (choice == 3)
-            {
-                break;
-            }
-            else
-            {
-                printf("Please Enter a valid choice");
-                getch();
-            }
-        }
 
-        return 0;
+int main()
+{
+    displayIntro("intro.txt");
+    int choice = 0;
+    while (choice != 3)
+    {
+        choice = gameMenu();
+        if (choice == 1)
+        {
+            playGame();
+        }
+        else if (choice == 2)
+        {
+            playGame();
+        }
+        else if (choice == 3)
+        {
+            break;
+        }
+        else
+        {
+            printf("Please Enter a valid choice");
+            getch();
+        }
     }
+
+    return 0;
+}

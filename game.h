@@ -7,6 +7,35 @@
 
 #define GRID_ROWS 18
 #define GRID_COLS 18
+#define MAX_JUNK 30
+#define MAX_ASTEROIDS 10
+#define BULLET_COUNT 10000
+
+
+
+typedef struct
+{
+    int x;
+    int y;
+    bool active;
+    int health;
+} Asteroid;
+
+typedef struct
+{
+    int x;
+    int y;
+    bool active;
+    time_t spawnTime;
+} Junk;
+
+typedef struct
+{
+    int x;
+    int y;
+    bool active;
+} Bullet;
+
 
 extern int GameTime;
 
@@ -25,6 +54,11 @@ extern int bossHealth;
 
 extern char Grid[GRID_ROWS][GRID_COLS];
 
+extern Asteroid asteroids[MAX_ASTEROIDS];
+extern Junk junks[MAX_JUNK];
+extern Bullet bullets[BULLET_COUNT];
+
+
 void drawGrid();
 void printPlayer();
 void erasePlayer();
@@ -32,5 +66,9 @@ void movePlayerUp();
 void movePlayerDown();
 void movePlayerLeft();
 void movePlayerRight();
+void printBullet(int x, int y);
+void eraseBullet(int x, int y);
+void generateBullet();
+void moveBullets();
 
 #endif
