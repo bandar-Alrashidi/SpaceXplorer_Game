@@ -15,6 +15,10 @@ void playGame()
     printInstructions(25, 18);
     while (1)
     {
+        printScore(25, 5);
+        printHealth(25, 7);
+        printTime(25, 9);
+        printBossHealth(25, 11);
         unsigned long currentTime = GetTickCount();
         if (GetAsyncKeyState(VK_LEFT))
         {

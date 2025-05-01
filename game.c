@@ -227,3 +227,29 @@ void moveAsteroids()
         }
     }
 }
+
+void printScore(int x, int y)
+{
+    gotoxy(x, y);
+    printf("Score : %d      ", PlayerScore);
+}
+
+void printHealth(int x, int y)
+{
+    gotoxy(x, y);
+    printf("Player Health : %d      ", PlayerHealth);
+}
+
+void printBossHealth(int x, int y)
+{
+    gotoxy(x, y);
+    printf("Boss Health : %d        ", bossHealth);
+}
+
+void printTime(int x, int y)
+{
+    int minutes = GameTime / 60;
+    int seconds = GameTime % 60;
+    gotoxy(x, y);
+    printf("Time Left : %01d:%02d       ", minutes, seconds);
+}

@@ -73,5 +73,9 @@ void moveBullets();
 void spawnAsteroid();
 void spawnJunk();
 void moveAsteroids();
+void printScore(int x, int y);
+void printHealth(int x, int y);
+void printBossHealth(int x, int y);
+void printTime(int x, int y);
 
-#endif
+#endif  
