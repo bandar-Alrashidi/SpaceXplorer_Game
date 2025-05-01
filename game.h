@@ -92,6 +92,7 @@ void loadGameState(const char *filename);
 void resetGameState(const char *filename);
 void drawFinalBoss();
 void moveFinalBoss();
-
+void spawnBossBomb(int x, int y);
+void moveBossBombs();
 
 #endif

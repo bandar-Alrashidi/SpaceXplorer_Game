@@ -100,6 +100,12 @@ void playGame()
         if (bossActive)
         {
             moveFinalBoss();
+            if (currentTime - lastBossBombTime >= 1500)
+            {
+                spawnBossBomb(Bx + 1, By + 1);
+                lastBossBombTime = currentTime;
+            }
+            moveBossBombs();
         }
 
         if (bossHealth <= 0)
@@ -128,33 +134,34 @@ void playGame()
     }
     gotoxy(1, 15);
 }
-    int main()
-    {
-        displayIntro("intro.txt");
-        int choice = 0;
-        while (choice != 3)
-        {
-            choice = gameMenu();
-            if (choice == 1)
-            {
-                loadGameState("gameState.txt");
-                playGame();
-            }
-            else if (choice == 2)
-            {
-                resetGameState("gameState.txt");
-                playGame();
-            }
-            else if (choice == 3)
-            {
-                break;
-            }
-            else
-            {
-                printf("Please Enter a valid choice");
-                getch();
-            }
-        }
 
-        return 0;
+int main()
+{
+    displayIntro("intro.txt");
+    int choice = 0;
+    while (choice != 3)
+    {
+        choice = gameMenu();
+        if (choice == 1)
+        {
+            loadGameState("gameState.txt");
+            playGame();
+        }
+        else if (choice == 2)
+        {
+            resetGameState("gameState.txt");
+            playGame();
+        }
+        else if (choice == 3)
+        {
+            break;
+        }
+        else
+        {
+            printf("Please Enter a valid choice");
+            getch();
+        }
     }
+
+    return 0;
+}

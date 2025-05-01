@@ -1,4 +1,3 @@
-
 #include "game.h"
 #include "utility.h"
 
@@ -531,4 +530,52 @@ void moveFinalBoss()
     }
 
     drawFinalBoss();
+}
+
+void spawnBossBomb(int x, int y)
+{
+    for (int i = 0; i < MAX_BOSS_BOMBS; i++)
+    {
+        if (!bossBombs[i].active)
+        {
+            bossBombs[i].x = x;
+            bossBombs[i].y = y;
+            bossBombs[i].active = true;
+            bossBombs[i].health = 3;
+            break;
+        }
+    }
+}
+
+void moveBossBombs()
+{
+    for (int i = 0; i < MAX_BOSS_BOMBS; i++)
+    {
+        if (bossBombs[i].active)
+        {
+            char next = getCharAtxy(bossBombs[i].x, bossBombs[i].y + 1);
+            if (next == ' ')
+            {
+                gotoxy(bossBombs[i].x, bossBombs[i].y);
+                putchar(' ');
+                bossBombs[i].y++;
+                gotoxy(bossBombs[i].x, bossBombs[i].y);
+                putchar('o');
+            }
+
+            else if (next == '+' || next == '-')
+            {
+                gotoxy(bossBombs[i].x, bossBombs[i].y);
+                putchar(' ');
+                bossBombs[i].y = 0;
+                bossBombs[i].active = false;
+            }
+
+            if ((bossBombs[i].x == Px || bossBombs[i].x == Px + 1) && bossBombs[i].y == Py)
+            {
+                PlayerHealth -= 10;
+                bossBombs[i].active = false;
+            }
+        }
+    }
 }
