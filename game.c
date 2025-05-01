@@ -392,3 +392,111 @@ void removeExpiredJunk()
         }
     }
 }
+
+void saveGameState(const char *filename)
+{
+    FILE *file = fopen(filename, "w");
+    if (!file)
+        return;
+
+    fprintf(file, "%d %d %d %d %d\n", Px, Py, PlayerHealth, PlayerScore, GameTime);
+
+    fprintf(file, "%d %d %c %d %d\n", Bx, By, direction, bossActive, bossHealth);
+
+    for (int i = 0; i < MAX_ASTEROIDS; i++)
+    {
+        fprintf(file, "%d %d %d %d\n", asteroids[i].x, asteroids[i].y, asteroids[i].active, asteroids[i].health);
+    }
+
+    for (int i = 0; i < MAX_JUNK; i++)
+    {
+        fprintf(file, "%d %d %d %ld\n", junks[i].x, junks[i].y, junks[i].active, junks[i].spawnTime);
+    }
+
+    for (int i = 0; i < BULLET_COUNT; i++)
+    {
+        fprintf(file, "%d %d %d\n", bullets[i].x, bullets[i].y, bullets[i].active);
+    }
+
+    fclose(file);
+}
+
+void loadGameState(const char *filename)
+{
+    FILE *file = fopen(filename, "r");
+    if (!file)
+        return;
+
+    fscanf(file, "%d %d %d %d %d\n", &Px, &Py, &PlayerHealth, &PlayerScore, &GameTime);
+
+    int bossActiveInt;
+    fscanf(file, "%d %d %c %d %d\n", &Bx, &By, &direction, &bossActiveInt, &bossHealth);
+    bossActive = (bool)bossActiveInt;
+
+    for (int i = 0; i < MAX_ASTEROIDS; i++)
+    {
+        fscanf(file, "%d %d %d %d\n", &asteroids[i].x, &asteroids[i].y, &asteroids[i].active, &asteroids[i].health);
+    }
+
+    for (int i = 0; i < MAX_JUNK; i++)
+    {
+        fscanf(file, "%d %d %d %ld\n", &junks[i].x, &junks[i].y, &junks[i].active, &junks[i].spawnTime);
+    }
+
+    for (int i = 0; i < BULLET_COUNT; i++)
+    {
+        fscanf(file, "%d %d %d\n", &bullets[i].x, &bullets[i].y, &bullets[i].active);
+    }
+
+    fclose(file);
+}
+
+void resetGameState(const char *filename)
+{
+    FILE *file = fopen(filename, "w");
+    if (!file)
+        return;
+
+    Px = 9;
+    Py = 16;
+    PlayerHealth = 100;
+    PlayerScore = 0;
+    GameTime = 300;
+
+    Bx = 3;
+    By = 2;
+    direction = 'R';
+    bossActive = false;
+    bossHealth = 100;
+
+    fprintf(file, "%d %d %d %d %d\n", Px, Py, PlayerHealth, PlayerScore, GameTime);
+    fprintf(file, "%d %d %c %d %d\n", Bx, By, direction, bossActive, bossHealth);
+
+    for (int i = 0; i < MAX_ASTEROIDS; i++)
+    {
+        asteroids[i].x = 0;
+        asteroids[i].y = 0;
+        asteroids[i].active = 0;
+        asteroids[i].health = 0;
+        fprintf(file, "%d %d %d %d\n", 0, 0, 0, 0);
+    }
+
+    for (int i = 0; i < MAX_JUNK; i++)
+    {
+        junks[i].x = 0;
+        junks[i].y = 0;
+        junks[i].active = 0;
+        junks[i].spawnTime = 0;
+        fprintf(file, "%d %d %d %ld\n", 0, 0, 0, 0L);
+    }
+
+    for (int i = 0; i < BULLET_COUNT; i++)
+    {
+        bullets[i].x = 0;
+        bullets[i].y = 0;
+        bullets[i].active = 0;
+        fprintf(file, "%d %d %d\n", 0, 0, 0);
+    }
+
+    fclose(file);
+}

@@ -87,6 +87,9 @@ void printTime(int x, int y);
 void checkPlayerCollisions();
 void checkBulletCollisions();
 void removeExpiredJunk();
+void saveGameState(const char *filename);
+void loadGameState(const char *filename);
+void resetGameState(const char *filename);
 
 
 #endif

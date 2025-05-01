@@ -43,6 +43,11 @@ void playGame()
         {
             generateBullet();
         }
+        if (GetAsyncKeyState(VK_ESCAPE))
+        {
+            saveGameState("gameState.txt");
+            break;
+        }
 
         if (currentTime - lastAsteroidTime >= 5000)
         {
@@ -75,10 +80,12 @@ int main()
         choice = gameMenu();
         if (choice == 1)
         {
+            loadGameState("gameState.txt");
             playGame();
         }
         else if (choice == 2)
         {
+            resetGameState("gameState.txt");
             playGame();
         }
         else if (choice == 3)
