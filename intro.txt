@@ -1,0 +1,22 @@
+------------------------------------------------------------
+                    SPACE WARRIOR: FINAL FRONTIER
+------------------------------------------------------------
+
+You are the last hope of humanity, piloting the ultimate space fighter.
+Navigate the deadly asteroid fields, collect space junk for resources,
+and fight your way to the Final Boss who threatens Earth’s survival.
+
+CONTROLS:
+    Arrow Keys  - Move your ship
+    Space       - Fire bullets
+    ESC         - Save and Exit
+
+OBJECTIVE:
+    - Destroy asteroids and gain points.
+    - Collect junk to increase time and score.
+    - Survive long enough to face the Final Boss.
+    - Defeat the boss by lowering its health!
+
+Good luck, Commander.
+
+------------------------------------------------------------
