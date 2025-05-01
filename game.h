@@ -10,7 +10,7 @@
 #define MAX_JUNK 30
 #define MAX_ASTEROIDS 10
 #define BULLET_COUNT 10000
-
+#define MAX_BOSS_BOMBS 100
 
 
 typedef struct
@@ -36,6 +36,12 @@ typedef struct
     bool active;
 } Bullet;
 
+typedef struct
+{
+    int x, y;
+    bool active;
+    int health;
+} Bomb;
 
 extern int GameTime;
 
@@ -57,6 +63,7 @@ extern char Grid[GRID_ROWS][GRID_COLS];
 extern Asteroid asteroids[MAX_ASTEROIDS];
 extern Junk junks[MAX_JUNK];
 extern Bullet bullets[BULLET_COUNT];
+extern Bomb bossBombs[MAX_BOSS_BOMBS];
 
 
 void drawGrid();
@@ -77,5 +84,9 @@ void printScore(int x, int y);
 void printHealth(int x, int y);
 void printBossHealth(int x, int y);
 void printTime(int x, int y);
+void checkPlayerCollisions();
+void checkBulletCollisions();
+void removeExpiredJunk();
 
-#endif  
+
+#endif

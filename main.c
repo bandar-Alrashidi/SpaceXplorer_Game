@@ -44,7 +44,6 @@ void playGame()
             generateBullet();
         }
 
-        moveBullets();
         if (currentTime - lastAsteroidTime >= 5000)
         {
             spawnAsteroid();
@@ -57,7 +56,11 @@ void playGame()
             lastJunkTime = currentTime;
         }
         moveAsteroids();
-
+        checkPlayerCollisions();
+        moveBullets();
+        checkBulletCollisions();
+        removeExpiredJunk();
+        
         Sleep(100);
     }
     gotoxy(1, 15);

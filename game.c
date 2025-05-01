@@ -9,6 +9,14 @@ int Py = 16;
 int PlayerHealth = 100;
 int PlayerScore = 0;
 
+char finalBoss[2][4] = {
+    "^@^",
+    "/_\\"};
+int Bx = 3;
+int By = 2;
+char direction = 'R';
+bool bossActive = false;
+int bossHealth = 100;
 
 char Grid[GRID_ROWS][GRID_COLS] = {
     "+-+-+-+-+-+-+-+--+",
@@ -34,6 +42,7 @@ char Grid[GRID_ROWS][GRID_COLS] = {
 Asteroid asteroids[MAX_ASTEROIDS];
 Junk junks[MAX_JUNK];
 Bullet bullets[BULLET_COUNT];
+Bomb bossBombs[MAX_BOSS_BOMBS];
 
 
 
@@ -252,4 +261,134 @@ void printTime(int x, int y)
     int seconds = GameTime % 60;
     gotoxy(x, y);
     printf("Time Left : %01d:%02d       ", minutes, seconds);
+}
+
+void checkPlayerCollisions()
+{
+    for (int i = 0; i < MAX_JUNK; i++)
+    {
+        if (junks[i].active &&
+            ((junks[i].x == Px && junks[i].y == Py) || (junks[i].x == Px + 1 && junks[i].y == Py)))
+        {
+            junks[i].active = false;
+            gotoxy(junks[i].x, junks[i].y);
+            putchar(' ');
+            PlayerScore += 5;
+            GameTime += 2;
+        }
+    }
+
+    for (int i = 0; i < MAX_ASTEROIDS; i++)
+    {
+        if (asteroids[i].active &&
+            ((asteroids[i].x == Px && asteroids[i].y == Py) ||
+             (asteroids[i].x == Px + 1 && asteroids[i].y == Py) ||
+             (asteroids[i].x == Px && asteroids[i].y == Py - 1) ||
+             (asteroids[i].x == Px + 1 && asteroids[i].y == Py - 1) ||
+             (asteroids[i].x == Px && asteroids[i].y == Py + 1) ||
+             (asteroids[i].x == Px + 1 && asteroids[i].y == Py + 1)))
+        {
+            asteroids[i].active = false;
+            gotoxy(asteroids[i].x, asteroids[i].y);
+            putchar(' ');
+            PlayerHealth -= 100;
+        }
+    }
+
+    for (int i = 0; i < MAX_BOSS_BOMBS; i++)
+    {
+        if (bossBombs[i].active &&
+            ((bossBombs[i].x == Px && bossBombs[i].y == Py) ||
+             (bossBombs[i].x == Px + 1 && bossBombs[i].y == Py) ||
+             (bossBombs[i].x == Px && bossBombs[i].y == Py - 1) ||
+             (bossBombs[i].x == Px + 1 && bossBombs[i].y == Py - 1)))
+        {
+            bossBombs[i].active = false;
+            gotoxy(bossBombs[i].x, bossBombs[i].y);
+            putchar(' ');
+            PlayerHealth -= 10;
+        }
+    }
+}
+
+void checkBulletCollisions()
+{
+    for (int i = 0; i < BULLET_COUNT; i++)
+    {
+        if (bullets[i].active)
+        {
+            for (int j = 0; j < MAX_ASTEROIDS; j++)
+            {
+                if (asteroids[j].active &&
+                    bullets[i].x == asteroids[j].x &&
+                    bullets[i].y - 1 == asteroids[j].y)
+                {
+                    bullets[i].active = false;
+                    eraseBullet(bullets[i].x, bullets[i].y);
+
+                    asteroids[j].health--;
+                    if (asteroids[j].health <= 0)
+                    {
+                        asteroids[j].active = false;
+                        gotoxy(asteroids[j].x, asteroids[j].y);
+                        putchar(' ');
+                        PlayerScore += 10;
+                    }
+                    break;
+                }
+            }
+            for (int j = 0; j < MAX_BOSS_BOMBS; j++)
+            {
+                if (bossBombs[j].active &&
+                    bullets[i].x == bossBombs[j].x &&
+                    bullets[i].y - 1 == bossBombs[j].y)
+                {
+                    bullets[i].active = false;
+                    eraseBullet(bullets[i].x, bullets[i].y);
+
+                    bossBombs[j].health--;
+
+                    if (bossBombs[j].health <= 0)
+                    {
+                        bossBombs[j].active = false;
+                        gotoxy(bossBombs[j].x, bossBombs[j].y);
+                        putchar(' ');
+                        PlayerScore += 5;
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    for (int i = 0; i < BULLET_COUNT; i++)
+    {
+        if (bullets[i].active && bossActive)
+        {
+            if ((bullets[i].x >= Bx && bullets[i].x <= Bx + 2) &&
+                (bullets[i].y >= By && bullets[i].y <= By + 2))
+            {
+                bullets[i].active = false;
+                gotoxy(bullets[i].x, bullets[i].y);
+                putchar(' ');
+
+                bossHealth -= 5;
+                PlayerScore += 2;
+            }
+        }
+    }
+}
+
+void removeExpiredJunk()
+{
+    time_t currentTime = time(NULL);
+    for (int i = 0; i < MAX_JUNK; i++)
+    {
+        if (junks[i].active && difftime(currentTime, junks[i].spawnTime) >= 5)
+        {
+            junks[i].active = false;
+            gotoxy(junks[i].x, junks[i].y);
+            putchar(' ');
+        }
+    }
 }
