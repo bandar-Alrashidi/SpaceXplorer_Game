@@ -5,6 +5,20 @@
 
 unsigned long lastAsteroidTime = 0;
 unsigned long lastJunkTime = 0;
+unsigned long lastTimeUpdate = 0;
+unsigned long lastBossBombTime = 0;
+void startNewLevel()
+{
+    clearScreen();
+    drawGrid();
+    Px = 9;
+    Py = 16;
+    printPlayer();
+
+    drawFinalBoss();
+    bossActive = true;
+}
+
 
 void playGame()
 {
@@ -39,65 +53,108 @@ void playGame()
         {
             movePlayerDown();
         }
+
         if (GetAsyncKeyState(VK_SPACE))
         {
             generateBullet();
         }
+
         if (GetAsyncKeyState(VK_ESCAPE))
         {
             saveGameState("gameState.txt");
             break;
         }
-
-        if (currentTime - lastAsteroidTime >= 5000)
+        if (!bossActive)
         {
-            spawnAsteroid();
-            lastAsteroidTime = currentTime;
+
+            if (currentTime - lastAsteroidTime >= 5000)
+            {
+                spawnAsteroid();
+                lastAsteroidTime = currentTime;
+            }
+
+            if (currentTime - lastJunkTime >= 10000)
+            {
+                spawnJunk();
+                lastJunkTime = currentTime;
+            }
+            moveAsteroids();
         }
 
-        if (currentTime - lastJunkTime >= 10000)
+        if (currentTime - lastTimeUpdate >= 1000 && GameTime > 0)
         {
-            spawnJunk();
-            lastJunkTime = currentTime;
+            GameTime--;
+            lastTimeUpdate = currentTime;
         }
-        moveAsteroids();
+
         checkPlayerCollisions();
         moveBullets();
         checkBulletCollisions();
         removeExpiredJunk();
-        
+
+        if (!bossActive && PlayerScore >= 50)
+        {
+            startNewLevel();
+        }
+
+        if (bossActive)
+        {
+            moveFinalBoss();
+        }
+
+        if (bossHealth <= 0)
+        {
+            clearScreen();
+            youWon();
+            printf("\n\nPress any key to play again...");
+            getch();
+            resetGameState("gameState.txt");
+            break;
+        }
+
+        if (PlayerHealth <= 0 || GameTime <= 0)
+        {
+            clearScreen();
+            youLose();
+            while (kbhit())
+                getch();
+            printf("\n\nPress any key to play again...");
+            getch();
+            resetGameState("gameState.txt");
+            break;
+        }
+
         Sleep(100);
     }
     gotoxy(1, 15);
 }
-
-int main()
-{
-    displayIntro("intro.txt");
-    int choice = 0;
-    while (choice != 3)
+    int main()
     {
-        choice = gameMenu();
-        if (choice == 1)
+        displayIntro("intro.txt");
+        int choice = 0;
+        while (choice != 3)
         {
-            loadGameState("gameState.txt");
-            playGame();
+            choice = gameMenu();
+            if (choice == 1)
+            {
+                loadGameState("gameState.txt");
+                playGame();
+            }
+            else if (choice == 2)
+            {
+                resetGameState("gameState.txt");
+                playGame();
+            }
+            else if (choice == 3)
+            {
+                break;
+            }
+            else
+            {
+                printf("Please Enter a valid choice");
+                getch();
+            }
         }
-        else if (choice == 2)
-        {
-            resetGameState("gameState.txt");
-            playGame();
-        }
-        else if (choice == 3)
-        {
-            break;
-        }
-        else
-        {
-            printf("Please Enter a valid choice");
-            getch();
-        }
-    }
 
-    return 0;
-}
+        return 0;
+    }

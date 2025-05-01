@@ -90,6 +90,8 @@ void removeExpiredJunk();
 void saveGameState(const char *filename);
 void loadGameState(const char *filename);
 void resetGameState(const char *filename);
+void drawFinalBoss();
+void moveFinalBoss();
 
 
 #endif

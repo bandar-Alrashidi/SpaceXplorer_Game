@@ -1,3 +1,4 @@
+
 #include "game.h"
 #include "utility.h"
 
@@ -499,4 +500,35 @@ void resetGameState(const char *filename)
     }
 
     fclose(file);
+}
+
+void drawFinalBoss()
+{
+    gotoxy(Bx, By);
+    printf("%s", finalBoss[0]);
+    gotoxy(Bx, By + 1);
+    printf("%s", finalBoss[1]);
+}
+
+void moveFinalBoss()
+{
+    gotoxy(Bx, By);
+    printf("   ");
+    gotoxy(Bx, By + 1);
+    printf("   ");
+
+    if (direction == 'R')
+    {
+        Bx++;
+        if (Bx >= GRID_COLS - 4)
+            direction = 'L';
+    }
+    else
+    {
+        Bx--;
+        if (Bx <= 1)
+            direction = 'R';
+    }
+
+    drawFinalBoss();
 }
