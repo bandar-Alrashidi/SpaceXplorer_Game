@@ -1,4 +1,4 @@
-# paceXplorer
+# SpaceXplorer
 
 **SpaceXplorer** is a text-based space exploration game developed in C. It features real-time keyboard controls, dynamic objects like asteroids and junk, player firing mechanisms, a final boss battle, file handling for save/load, and a scoring system — all rendered in a console grid.
 
