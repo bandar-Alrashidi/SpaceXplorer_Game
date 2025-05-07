@@ -93,7 +93,7 @@ void displayIntro(const char *filename)
 void printInstructions(int x, int y)
 {
     gotoxy(x, y);
-    printf("Arrow Keys - Move   Space - Fire    Esc - Save and Quit");
+    printf("Arrow Keys - Move   Space - Right Fire  Back - Left Fire   Esc - Save and Quit");
 }
 
 int gameMenu()

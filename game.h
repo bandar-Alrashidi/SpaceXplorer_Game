@@ -5,8 +5,8 @@
 #include <time.h>
 #include "utility.h"
 
-#define GRID_ROWS 18
-#define GRID_COLS 18
+#define GRID_ROWS 22
+#define GRID_COLS 41
 #define MAX_JUNK 30
 #define MAX_ASTEROIDS 10
 #define BULLET_COUNT 10000
@@ -45,7 +45,7 @@ typedef struct
 
 extern int GameTime;
 
-extern char player[2];
+extern char player;
 extern int Px;
 extern int Py;
 extern int PlayerHealth;
@@ -76,10 +76,12 @@ void movePlayerRight();
 void printBullet(int x, int y);
 void eraseBullet(int x, int y);
 void generateBullet();
+// void generateLeftBullet();
 void moveBullets();
 void spawnAsteroid();
 void spawnJunk();
 void moveAsteroids();
+void moveAsteroidTowardsPlayer(int playerX, int playerY);
 void printScore(int x, int y);
 void printHealth(int x, int y);
 void printBossHealth(int x, int y);
@@ -89,7 +91,6 @@ void checkBulletCollisions();
 void removeExpiredJunk();
 void saveGameState(const char *filename);
 void loadGameState(const char *filename);
-void resetGameState(const char *filename);
 void drawFinalBoss();
 void moveFinalBoss();
 void spawnBossBomb(int x, int y);
@@ -97,6 +98,7 @@ void moveBossBombs();
 void removeAsteroids();
 void removeJunk();
 void removeBullets();
+void resetGameState(const char *filename);
 
 
 

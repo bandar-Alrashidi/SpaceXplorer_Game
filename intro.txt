@@ -4,7 +4,7 @@
 
 You are the last hope of humanity, piloting the ultimate space fighter.
 Navigate the deadly asteroid fields, collect space junk for resources,
-and fight your way to the Final Boss who threatens Earth’s survival.
+and fight your way to the Final Boss who threatens Earth survival.
 
 CONTROLS:
     Arrow Keys  - Move your ship
@@ -12,10 +12,12 @@ CONTROLS:
     ESC         - Save and Exit
 
 OBJECTIVE:
+    - Avoid the chasing Asteroids.
+    - Move such like that the asteroid do not come face to face.
     - Destroy asteroids and gain points.
     - Collect junk to increase time and score.
-    - Survive long enough to face the Final Boss.
-    - Defeat the boss by lowering its health!
+    - Reach Score of 50 to reach final boss.
+    - Defeat the boss by lowering its health.
 
 Good luck, Commander.
 

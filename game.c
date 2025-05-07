@@ -3,47 +3,50 @@
 
 int GameTime = 300;
 
-char player[2] = {'/', '\\'};
-int Px = 9;
-int Py = 16;
+char player = 'S';
+int Px = 23;
+int Py = 18;
 int PlayerHealth = 100;
 int PlayerScore = 0;
 
 char finalBoss[2][4] = {
     "^@^",
     "/_\\"};
-int Bx = 3;
-int By = 2;
+int Bx = 2;
+int By = 0;
 char direction = 'R';
 bool bossActive = false;
 int bossHealth = 100;
 
 char Grid[GRID_ROWS][GRID_COLS] = {
-    "+-+-+-+-+-+-+-+--+",
-    "|                |",
-    "|                |",
-    "|                |",
-    "|                |",
-    "|                |",
-    "|                |",
-    "|                |",
-    "|                |",
-    "|                |",
-    "|                |",
-    "|                |",
-    "|                |",
-    "|                |",
-    "|                |",
-    "|                |",
-    "|                |",
-    "+-+-+-+-+-+-+-+--+"};
-
+    "+---------------------------------------+",
+    "|. . . . . . . . . . . . . . . . . . . .|",
+    "|. . . . . . . . . . . . . . . . . . . .|",
+    "|. . . . . . . . . . . . . . . . . . . .|",
+    "|. . . . . . . . . . . . . . . . . . . .|",
+    "|. . . . . . . . . . . . . . . . . . . .|",
+    "|. . . . . . . . . . . . . . . . . . . .|",
+    "|. . . . . . . . . . . . . . . . . . . .|",
+    "|. . . . . . . . . . . . . . . . . . . .|",
+    "|. . . . . . . . . . . . . . . . . . . .|",
+    "|. . . . . . . . . . . . . . . . . . . .|",
+    "|. . . . . . . . . . . . . . . . . . . .|",
+    "|. . . . . . . . . . . . . . . . . . . .|",
+    "|. . . . . . . . . . . . . . . . . . . .|",
+    "|. . . . . . . . . . . . . . . . . . . .|",
+    "|. . . . . . . . . . . . . . . . . . . .|",
+    "|. . . . . . . . . . . . . . . . . . . .|",
+    "|. . . . . . . . . . . . . . . . . . . .|",
+    "|. . . . . . . . . . . . . . . . . . . .|",
+    "|. . . . . . . . . . . . . . . . . . . .|",
+    "|. . . . . . . . . . . . . . . . . . . .|",
+    "+---------------------------------------+",
+};
 
 Asteroid asteroids[MAX_ASTEROIDS];
 Junk junks[MAX_JUNK];
 Bullet bullets[BULLET_COUNT];
 Bomb bossBombs[MAX_BOSS_BOMBS];
-
 
 void drawGrid()
 {
@@ -60,52 +63,53 @@ void drawGrid()
 void printPlayer()
 {
     gotoxy(Px, Py);
-    for (int i = 0; i < 2; i++)
-    {
-        putchar(player[i]);
-    }
+    putchar(player);
 }
 
 void erasePlayer()
 {
     gotoxy(Px, Py);
-    for (int i = 0; i < 2; i++)
-    {
-        putchar(' ');
-    }
+    putchar(' ');
 }
 
 void movePlayerUp()
 {
-    char next1 = getCharAtxy(Px, Py - 1);
-    char next2 = getCharAtxy(Px + 1, Py - 1);
-    if ((next1 == ' ' || next1 == '#') && (next2 == ' ' || next2 == '#'))
+    char next = getCharAtxy(Px, Py - 1);
+
+    if (next == '.' || next == '#')
     {
-        erasePlayer();
-        Py--;
+        gotoxy(Px, Py);
+        printf(".");
+
+        Py = Py - 1;
         printPlayer();
     }
 }
 
 void movePlayerDown()
 {
-    char next1 = getCharAtxy(Px, Py + 1);
-    char next2 = getCharAtxy(Px + 1, Py + 1);
-    if ((next1 == ' ' || next1 == '#') && (next2 == ' ' || next2 == '#'))
+    char next = getCharAtxy(Px, Py + 1);
+
+    if (next == '.' || next == '#')
     {
-        erasePlayer();
-        Py++;
+        gotoxy(Px, Py);
+        printf(".");
+
+        Py = Py + 1;
         printPlayer();
     }
 }
 
 void movePlayerLeft()
 {
-    char next = getCharAtxy(Px - 1, Py);
-    if (next == ' ' || next == '#')
+    char next = getCharAtxy(Px - 2, Py);
+
+    if (next == '.' || next == '#')
     {
-        erasePlayer();
-        Px = Px - 1;
+        gotoxy(Px, Py);
+        printf(".");
+
+        Px = Px - 2;
         printPlayer();
     }
 }
@@ -113,10 +117,13 @@ void movePlayerLeft()
 void movePlayerRight()
 {
     char next = getCharAtxy(Px + 2, Py);
-    if (next == ' ' || next == '#')
+
+    if (next == '.' || next == '#')
     {
-        erasePlayer();
-        Px = Px + 1;
+        gotoxy(Px, Py);
+        printf(".");
+
+        Px = Px + 2;
         printPlayer();
     }
 }
@@ -124,7 +131,7 @@ void movePlayerRight()
 void printBullet(int x, int y)
 {
     gotoxy(x, y);
-    putchar('.');
+    putchar('^');
 }
 
 void eraseBullet(int x, int y)
@@ -135,12 +142,19 @@ void eraseBullet(int x, int y)
 
 void generateBullet()
 {
+    int targetX = Px;
+    int targetY = Py - 1;
+
+    char next = getCharAtxy(targetX, targetY);
+    if (next != 'S' && next != '.')
+        return;
+
     for (int i = 0; i < BULLET_COUNT; i++)
     {
         if (!bullets[i].active)
         {
-            bullets[i].x = Px + 1;
-            bullets[i].y = Py - 1;
+            bullets[i].x = targetX;
+            bullets[i].y = targetY;
             bullets[i].active = true;
             printBullet(bullets[i].x, bullets[i].y);
             break;
@@ -155,16 +169,34 @@ void moveBullets()
         if (bullets[i].active)
         {
             char next = getCharAtxy(bullets[i].x, bullets[i].y - 1);
-            if (next == ' ')
+
+            if (next == '.' || next == 'S')
             {
-                eraseBullet(bullets[i].x, bullets[i].y);
-                bullets[i].y = bullets[i].y - 1;
+                gotoxy(bullets[i].x, bullets[i].y);
+                putchar('.');
+                bullets[i].y -= 1;
                 printBullet(bullets[i].x, bullets[i].y);
             }
-            else
+            
+            else if (next == '#' || next == '-' || next == '+')
+            {
+                bullets[i].active = false;
+                gotoxy(bullets[i].x, bullets[i].y);
+                if(!bossActive)
+                {
+                    putchar('.');
+                }
+                else
+                {
+                    putchar(' ');
+                }
+            }
+
+            else if (next == ' ')
             {
                 eraseBullet(bullets[i].x, bullets[i].y);
-                bullets[i].active = false;
+                bullets[i].y -= 1;
+                printBullet(bullets[i].x, bullets[i].y);
             }
         }
     }
@@ -172,67 +204,78 @@ void moveBullets()
 
 void spawnAsteroid()
 {
-    for (int i = 0; i < MAX_ASTEROIDS; i++)
+    if (!asteroids[0].active)
     {
-        if (!asteroids[i].active)
-        {
-            asteroids[i].x = rand() % (GRID_COLS - 2) + 1;
-            asteroids[i].y = 1;
-            asteroids[i].active = true;
-            asteroids[i].health = 1;
-            gotoxy(asteroids[i].x, asteroids[i].y);
-            putchar('*');
-            break;
-        }
+        asteroids[0].x = 1 + (rand() % ((GRID_COLS - 2) / 2)) * 2;
+        asteroids[0].y = 1;
+        asteroids[0].active = true;
+        asteroids[0].health = 1;
+
+        gotoxy(asteroids[0].x, asteroids[0].y);
+        putchar('a');
     }
 }
 
 void spawnJunk()
 {
-    for (int i = 0; i < MAX_JUNK; i++)
+    int count = 0;
+
+    while (count < MAX_JUNK)
     {
-        if (!junks[i].active)
+        int row = 1 + rand() % 20;
+        int col = 1 + (rand() % 21) * 2;
+
+        char spot = getCharAtxy(col, row);
+
+        if (spot == '.')
         {
-            junks[i].x = rand() % (GRID_COLS - 2) + 1;
-            junks[i].y = rand() % (GRID_ROWS - 2) + 1;
-            char spot = getCharAtxy(junks[i].x, junks[i].y);
-            if (spot == ' ')
+            int occupied = 0;
+            for (int j = 0; j < count; j++)
             {
-                junks[i].active = true;
-                junks[i].spawnTime = time(NULL);
-                gotoxy(junks[i].x, junks[i].y);
-                putchar('#');
-                gotoxy(25, 15);
+                if (junks[j].x == col && junks[j].y == row)
+                {
+                    occupied = 1;
+                    break;
+                }
             }
-            break;
+            if (occupied)
+                continue;
+
+            junks[count].x = col;
+            junks[count].y = row;
+            junks[count].active = true;
+            junks[count].spawnTime = time(NULL);
+
+            gotoxy(col, row);
+            putchar('#');
+            count++;
         }
     }
 }
 
-void moveAsteroids()
+void moveAsteroidTowardsPlayer(int playerX, int playerY)
 {
-    for (int i = 0; i < MAX_ASTEROIDS; i++)
-    {
-        if (asteroids[i].active)
-        {
-            char next = getCharAtxy(asteroids[i].x, asteroids[i].y + 1);
-            if (next == ' ' || next == '#')
-            {
-                gotoxy(asteroids[i].x, asteroids[i].y);
-                putchar(' ');
-                asteroids[i].y++;
-                gotoxy(asteroids[i].x, asteroids[i].y);
-                putchar('*');
-            }
+    if (!asteroids[0].active)
+        return;
 
-            else if (next == '+' || next == '-')
-            {
-                gotoxy(asteroids[i].x, asteroids[i].y);
-                putchar(' ');
-                asteroids[i].y = 0;
-                asteroids[i].active = false;
-            }
-        }
+    gotoxy(asteroids[0].x, asteroids[0].y);
+    putchar('.');
+
+    if (asteroids[0].x < playerX)
+        asteroids[0].x += 2;
+    else if (asteroids[0].x > playerX)
+        asteroids[0].x -= 2;
+
+    if (asteroids[0].y < playerY)
+        asteroids[0].y += 1;
+
+    gotoxy(asteroids[0].x, asteroids[0].y);
+    putchar('a');
+
+    if (asteroids[0].x == playerX && asteroids[0].y == playerY)
+    {
+        asteroids[0].active = false;
+        PlayerHealth = PlayerHealth - 100;
     }
 }
 
@@ -267,7 +310,7 @@ void checkPlayerCollisions()
     for (int i = 0; i < MAX_JUNK; i++)
     {
         if (junks[i].active &&
-            ((junks[i].x == Px && junks[i].y == Py) || (junks[i].x == Px + 1 && junks[i].y == Py)))
+            (junks[i].x == Px && junks[i].y == Py))
         {
             junks[i].active = false;
             gotoxy(junks[i].x, junks[i].y);
@@ -289,7 +332,7 @@ void checkPlayerCollisions()
         {
             asteroids[i].active = false;
             gotoxy(asteroids[i].x, asteroids[i].y);
-            putchar(' ');
+            putchar('.');
             PlayerHealth -= 100;
         }
     }
@@ -304,7 +347,7 @@ void checkPlayerCollisions()
         {
             bossBombs[i].active = false;
             gotoxy(bossBombs[i].x, bossBombs[i].y);
-            putchar(' ');
+            putchar('.');
             PlayerHealth -= 10;
         }
     }
@@ -330,7 +373,7 @@ void checkBulletCollisions()
                     {
                         asteroids[j].active = false;
                         gotoxy(asteroids[j].x, asteroids[j].y);
-                        putchar(' ');
+                        putchar('.');
                         PlayerScore += 10;
                     }
                     break;
@@ -343,7 +386,8 @@ void checkBulletCollisions()
                     bullets[i].y - 1 == bossBombs[j].y)
                 {
                     bullets[i].active = false;
-                    eraseBullet(bullets[i].x, bullets[i].y);
+                    gotoxy(bullets[i].x, bullets[i].y);
+                    putchar('.');
 
                     bossBombs[j].health--;
 
@@ -351,7 +395,7 @@ void checkBulletCollisions()
                     {
                         bossBombs[j].active = false;
                         gotoxy(bossBombs[j].x, bossBombs[j].y);
-                        putchar(' ');
+                        putchar('.');
                         PlayerScore += 5;
                     }
                     break;
@@ -369,7 +413,7 @@ void checkBulletCollisions()
             {
                 bullets[i].active = false;
                 gotoxy(bullets[i].x, bullets[i].y);
-                putchar(' ');
+                putchar('.');
 
                 bossHealth -= 5;
                 PlayerScore += 2;
@@ -396,7 +440,10 @@ void saveGameState(const char *filename)
 {
     FILE *file = fopen(filename, "w");
     if (!file)
+    {
+        perror("Error opening file for saving game state");
         return;
+    }
 
     fprintf(file, "%d %d %d %d %d\n", Px, Py, PlayerHealth, PlayerScore, GameTime);
 
@@ -424,27 +471,55 @@ void loadGameState(const char *filename)
 {
     FILE *file = fopen(filename, "r");
     if (!file)
+    {
+        perror("Error opening file for loading game state");
         return;
+    }
 
-    fscanf(file, "%d %d %d %d %d\n", &Px, &Py, &PlayerHealth, &PlayerScore, &GameTime);
+    if (fscanf(file, "%d %d %d %d %d\n", &Px, &Py, &PlayerHealth, &PlayerScore, &GameTime) != 5)
+    {
+        fprintf(stderr, "Error reading player data from file\n");
+        fclose(file);
+        return;
+    }
 
     int bossActiveInt;
-    fscanf(file, "%d %d %c %d %d\n", &Bx, &By, &direction, &bossActiveInt, &bossHealth);
-    bossActive = (bool)bossActiveInt;
+    if (fscanf(file, "%d %d %c %d %d\n", &Bx, &By, &direction, &bossActiveInt, &bossHealth) != 5)
+    {
+        fprintf(stderr, "Error reading boss data from file\n");
+        fclose(file);
+        return;
+    }
+    bossActive = (bossActiveInt != 0);
 
     for (int i = 0; i < MAX_ASTEROIDS; i++)
     {
-        fscanf(file, "%d %d %d %d\n", &asteroids[i].x, &asteroids[i].y, &asteroids[i].active, &asteroids[i].health);
+        if (fscanf(file, "%d %d %d %d\n", &asteroids[i].x, &asteroids[i].y, &asteroids[i].active, &asteroids[i].health) != 4)
+        {
+            fprintf(stderr, "Error reading asteroid data from file\n");
+            fclose(file);
+            return;
+        }
     }
 
     for (int i = 0; i < MAX_JUNK; i++)
     {
-        fscanf(file, "%d %d %d %ld\n", &junks[i].x, &junks[i].y, &junks[i].active, &junks[i].spawnTime);
+        if (fscanf(file, "%d %d %d %ld\n", &junks[i].x, &junks[i].y, &junks[i].active, &junks[i].spawnTime) != 4)
+        {
+            fprintf(stderr, "Error reading junk data from file\n");
+            fclose(file);
+            return;
+        }
     }
 
     for (int i = 0; i < BULLET_COUNT; i++)
     {
-        fscanf(file, "%d %d %d\n", &bullets[i].x, &bullets[i].y, &bullets[i].active);
+        if (fscanf(file, "%d %d %d\n", &bullets[i].x, &bullets[i].y, &bullets[i].active) != 3)
+        {
+            fprintf(stderr, "Error reading bullet data from file\n");
+            fclose(file);
+            return;
+        }
     }
 
     fclose(file);
@@ -512,10 +587,27 @@ void moveBossBombs()
                 putchar('o');
             }
 
-            else if (next == '+' || next == '-')
+            if (next == '.')
             {
                 gotoxy(bossBombs[i].x, bossBombs[i].y);
-                putchar(' ');
+                putchar('.');
+                bossBombs[i].y++;
+                gotoxy(bossBombs[i].x, bossBombs[i].y);
+                putchar('o');
+            }
+
+            else if (next == '+' || next == '-')
+            {
+                char back = getCharAtxy(bossBombs[i].x, bossBombs[i].y-1);
+                gotoxy(bossBombs[i].x, bossBombs[i].y);
+                if(back == '.')
+                {
+                    putchar('.');
+                }
+                else
+                {
+                    putchar(' ');
+                }
                 bossBombs[i].y = 0;
                 bossBombs[i].active = false;
             }
@@ -557,22 +649,36 @@ void resetGameState(const char *filename)
 {
     FILE *file = fopen(filename, "w");
     if (!file)
+    {
+        perror("Error opening file to reset game state");
         return;
+    }
 
-    Px = 9;
-    Py = 16;
+    Px = 23;
+    Py = 18;
     PlayerHealth = 100;
     PlayerScore = 0;
     GameTime = 300;
 
     Bx = 3;
-    By = 2;
+    By = 1;
     direction = 'R';
     bossActive = false;
     bossHealth = 100;
 
-    fprintf(file, "%d %d %d %d %d\n", Px, Py, PlayerHealth, PlayerScore, GameTime);
-    fprintf(file, "%d %d %c %d %d\n", Bx, By, direction, bossActive, bossHealth);
+    if (fprintf(file, "%d %d %d %d %d\n", Px, Py, PlayerHealth, PlayerScore, GameTime) < 0)
+    {
+        perror("Error writing player data to file");
+        fclose(file);
+        return;
+    }
+
+    if (fprintf(file, "%d %d %c %d %d\n", Bx, By, direction, bossActive, bossHealth) < 0)
+    {
+        perror("Error writing boss data to file");
+        fclose(file);
+        return;
+    }
 
     for (int i = 0; i < MAX_ASTEROIDS; i++)
     {
@@ -580,7 +686,12 @@ void resetGameState(const char *filename)
         asteroids[i].y = 0;
         asteroids[i].active = 0;
         asteroids[i].health = 0;
-        fprintf(file, "%d %d %d %d\n", 0, 0, 0, 0);
+        if (fprintf(file, "%d %d %d %d\n", 0, 0, 0, 0) < 0)
+        {
+            perror("Error writing asteroid data to file");
+            fclose(file);
+            return;
+        }
     }
 
     for (int i = 0; i < MAX_JUNK; i++)
@@ -589,7 +700,12 @@ void resetGameState(const char *filename)
         junks[i].y = 0;
         junks[i].active = 0;
         junks[i].spawnTime = 0;
-        fprintf(file, "%d %d %d %ld\n", 0, 0, 0, 0L);
+        if (fprintf(file, "%d %d %d %ld\n", 0, 0, 0, 0L) < 0)
+        {
+            perror("Error writing junk data to file");
+            fclose(file);
+            return;
+        }
     }
 
     for (int i = 0; i < BULLET_COUNT; i++)
@@ -597,7 +713,12 @@ void resetGameState(const char *filename)
         bullets[i].x = 0;
         bullets[i].y = 0;
         bullets[i].active = 0;
-        fprintf(file, "%d %d %d\n", 0, 0, 0);
+        if (fprintf(file, "%d %d %d\n", 0, 0, 0) < 0)
+        {
+            perror("Error writing bullet data to file");
+            fclose(file);
+            return;
+        }
     }
 
     fclose(file);

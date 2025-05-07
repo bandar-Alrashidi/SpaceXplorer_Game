@@ -4,15 +4,13 @@
 #include "utility.h"
 
 unsigned long lastAsteroidTime = 0;
-unsigned long lastJunkTime = 0;
 unsigned long lastTimeUpdate = 0;
 unsigned long lastBossBombTime = 0;
+
 void startNewLevel()
 {
     clearScreen();
     drawGrid();
-    Px = 9;
-    Py = 16;
     printPlayer();
 
     removeAsteroids();
@@ -23,39 +21,45 @@ void startNewLevel()
     bossActive = true;
 }
 
-
 void playGame()
 {
     clearScreen();
     hideCursor();
     drawGrid();
+    if (!bossActive)
+    {
+        spawnJunk();
+    }
     printPlayer();
-    printInstructions(25, 18);
+    printInstructions(50, 18);
     while (1)
     {
-        printScore(25, 5);
-        printHealth(25, 7);
-        printTime(25, 9);
-        printBossHealth(25, 11);
+        printScore(50, 5);
+        printHealth(50, 7);
+        printTime(50, 9);
         unsigned long currentTime = GetTickCount();
         if (GetAsyncKeyState(VK_LEFT))
         {
             movePlayerLeft();
+            moveAsteroidTowardsPlayer(Px, Py);
         }
 
         if (GetAsyncKeyState(VK_RIGHT))
         {
             movePlayerRight();
+            moveAsteroidTowardsPlayer(Px, Py);
         }
 
         if (GetAsyncKeyState(VK_UP))
         {
             movePlayerUp();
+            moveAsteroidTowardsPlayer(Px, Py);
         }
 
         if (GetAsyncKeyState(VK_DOWN))
         {
             movePlayerDown();
+            moveAsteroidTowardsPlayer(Px, Py);
         }
 
         if (GetAsyncKeyState(VK_SPACE))
@@ -76,13 +80,6 @@ void playGame()
                 spawnAsteroid();
                 lastAsteroidTime = currentTime;
             }
-
-            if (currentTime - lastJunkTime >= 10000)
-            {
-                spawnJunk();
-                lastJunkTime = currentTime;
-            }
-            moveAsteroids();
         }
 
         if (currentTime - lastTimeUpdate >= 1000 && GameTime > 0)
@@ -94,7 +91,6 @@ void playGame()
         checkPlayerCollisions();
         moveBullets();
         checkBulletCollisions();
-        removeExpiredJunk();
 
         if (!bossActive && PlayerScore >= 50)
         {
@@ -103,8 +99,9 @@ void playGame()
 
         if (bossActive)
         {
+            printBossHealth(50, 11);
             moveFinalBoss();
-            if (currentTime - lastBossBombTime >= 1500)
+            if (currentTime - lastBossBombTime >= 500)
             {
                 spawnBossBomb(Bx + 1, By + 1);
                 lastBossBombTime = currentTime;
@@ -138,7 +135,6 @@ void playGame()
     }
     gotoxy(1, 15);
 }
-
 int main()
 {
     displayIntro("intro.txt");
