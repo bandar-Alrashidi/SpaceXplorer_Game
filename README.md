@@ -43,6 +43,7 @@ Move to collect junk and shoot asteroids. Gain score by surviving and hitting en
 - V_4.0: Added boss and movement  
 - V_4.1: Added boss bomb mechanics and collisions  
 - V_5.0: Finalized the game with minor adjustments
+- V_6.0: Removed unnessary funtionalities and finalized the game
 
 **License**:  
 Free for educational and personal use.
