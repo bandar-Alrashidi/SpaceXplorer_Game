@@ -50,14 +50,6 @@ char getCharAtxy(short int x, short int y)
     return ReadConsoleOutput(GetStdHandle(STD_OUTPUT_HANDLE), &ci, coordBufSize, xy, &rect) ? ci.Char.AsciiChar : ' ';
 }
 
-void clearScreen()
-{
-#ifdef _WIN32
-    system("cls");
-#else
-    system("clear");
-#endif
-}
 
 void hideCursor()
 {
@@ -68,32 +60,61 @@ void hideCursor()
     SetConsoleCursorInfo(consoleHandle, &info);
 }
 
-void displayIntro(const char *filename)
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <windows.h>
+#include <conio.h>
+
+void clearScreen()
+{
+    system("cls");
+}
+
+int displayIntro(const char *filename)
 {
     FILE *file = fopen(filename, "r");
     if (!file)
     {
         printf("Failed to open intro file.\n");
-        return;
+        return 1;
     }
 
     clearScreen();
     char line[256];
+    char lastLine[256] = "";
+
     while (fgets(line, sizeof(line), file))
     {
         printf("%s", line);
         Sleep(50);
+
+        if (strlen(line) > 1)
+        {
+            strcpy(lastLine, line);
+        }
     }
+
     fclose(file);
 
     printf("\n\nPress any key to start...");
     getch();
+
+    int difficulty = 1;
+    if (sscanf(lastLine, "The Difficulty Level is : %d", &difficulty) == 1)
+    {
+        return difficulty;
+    }
+    else
+    {
+        return 1;
+    }
 }
 
 void printInstructions(int x, int y)
 {
     gotoxy(x, y);
-    printf("Arrow Keys - Move   Space - Right Fire  Back - Left Fire   Esc - Save and Quit");
+    printf("W,S,A and S - Move  Esc - Save and Quit");
 }
 
 int gameMenu()
@@ -111,22 +132,4 @@ int gameMenu()
 
     scanf("%d", &choice);
     return choice;
-}
-
-char *askPlayerName()
-{
-    clearScreen();
-    static char name[100];
-    printf("+_____________________________________________________________+\n");
-    printf("|                       PLAYER INFO                           |\n");
-    printf("+-------------------------------------------------------------+\n");
-    printf("Enter the player name: ");
-    scanf("%99s", name);
-    return name;
-}
-
-void showPlayerName(int x, int y, char* name)
-{
-    gotoxy(x, y);
-    printf("Player : %s    ", name);
 }

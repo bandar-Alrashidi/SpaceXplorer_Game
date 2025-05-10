@@ -5,66 +5,50 @@
 
 unsigned long lastAsteroidTime = 0;
 unsigned long lastTimeUpdate = 0;
-unsigned long lastBossBombTime = 0;
-
-void startNewLevel()
-{
-    clearScreen();
-    drawGrid();
-    printPlayer();
-
-    removeAsteroids();
-    removeJunk();
-    removeBullets();
-
-    drawFinalBoss();
-    bossActive = true;
-}
 
 void playGame()
 {
     clearScreen();
     hideCursor();
     drawGrid();
-    if (!bossActive)
-    {
-        spawnJunk();
-    }
+
+    spawnJunk();
     printPlayer();
     printInstructions(50, 18);
     while (1)
     {
         printScore(50, 5);
         printHealth(50, 7);
-        printTime(50, 9);
+        printFuel(50, 9);
+        printJunkCollection(50, 11);
+        showDifficulty(50, 13);
         unsigned long currentTime = GetTickCount();
-        if (GetAsyncKeyState(VK_LEFT))
+        if (GetAsyncKeyState('A') & 0x8000)
         {
             movePlayerLeft();
             moveAsteroidTowardsPlayer(Px, Py);
+            reduceFuel();
         }
 
-        if (GetAsyncKeyState(VK_RIGHT))
+        if (GetAsyncKeyState('D') & 0x8000)
         {
             movePlayerRight();
             moveAsteroidTowardsPlayer(Px, Py);
+            reduceFuel();
         }
 
-        if (GetAsyncKeyState(VK_UP))
+        if (GetAsyncKeyState('W') & 0x8000)
         {
             movePlayerUp();
             moveAsteroidTowardsPlayer(Px, Py);
+            reduceFuel();
         }
 
-        if (GetAsyncKeyState(VK_DOWN))
+        if (GetAsyncKeyState('S') & 0x8000)
         {
             movePlayerDown();
             moveAsteroidTowardsPlayer(Px, Py);
-        }
-
-        if (GetAsyncKeyState(VK_SPACE))
-        {
-            generateBullet();
+            reduceFuel();
         }
 
         if (GetAsyncKeyState(VK_ESCAPE))
@@ -72,57 +56,31 @@ void playGame()
             saveGameState("gameState.txt");
             break;
         }
-        if (!bossActive)
-        {
 
-            if (currentTime - lastAsteroidTime >= 5000)
-            {
-                spawnAsteroid();
-                lastAsteroidTime = currentTime;
-            }
-        }
-
-        if (currentTime - lastTimeUpdate >= 1000 && GameTime > 0)
+        if (currentTime - lastAsteroidTime >= 5000)
         {
-            GameTime--;
-            lastTimeUpdate = currentTime;
+            spawnAsteroid();
+            lastAsteroidTime = currentTime;
         }
 
         checkPlayerCollisions();
-        moveBullets();
-        checkBulletCollisions();
 
-        if (!bossActive && PlayerScore >= 50)
-        {
-            startNewLevel();
-        }
-
-        if (bossActive)
-        {
-            printBossHealth(50, 11);
-            moveFinalBoss();
-            if (currentTime - lastBossBombTime >= 500)
-            {
-                spawnBossBomb(Bx + 1, By + 1);
-                lastBossBombTime = currentTime;
-            }
-            moveBossBombs();
-        }
-
-        if (bossHealth <= 0)
+        if (PlayerHealth <= 0 || Fuel <= 0)
         {
             clearScreen();
-            youWon();
+            youLose();
+            while (kbhit())
+                getch();
             printf("\n\nPress any key to play again...");
             getch();
             resetGameState("gameState.txt");
             break;
         }
 
-        if (PlayerHealth <= 0 || GameTime <= 0)
+        if(junkCollected >= junkTarget)
         {
             clearScreen();
-            youLose();
+            youWon();
             while (kbhit())
                 getch();
             printf("\n\nPress any key to play again...");
@@ -137,7 +95,8 @@ void playGame()
 }
 int main()
 {
-    displayIntro("intro.txt");
+    int diff = displayIntro("intro.txt");
+    setDifficulty(diff);
     int choice = 0;
     while (choice != 3)
     {

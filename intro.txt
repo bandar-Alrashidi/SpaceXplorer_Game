@@ -7,18 +7,15 @@ Navigate the deadly asteroid fields, collect space junk for resources,
 and fight your way to the Final Boss who threatens Earth survival.
 
 CONTROLS:
-    Arrow Keys  - Move your ship
-    Space       - Fire bullets
+    W,S,A and D  - Move your ship
     ESC         - Save and Exit
 
 OBJECTIVE:
     - Avoid the chasing Asteroids.
-    - Move such like that the asteroid do not come face to face.
-    - Destroy asteroids and gain points.
     - Collect junk to increase time and score.
-    - Reach Score of 50 to reach final boss.
-    - Defeat the boss by lowering its health.
 
 Good luck, Commander.
 
 ------------------------------------------------------------
+
+The Difficulty Level is : 2
